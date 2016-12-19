@@ -20,8 +20,8 @@ int main(){
 		std::cout << std::endl;
 		if (g.parseInput(input)){
 			g.switchTurn();
+			g.incTurnNum();
 		}
-		g.incTurnNum();
 	}
 
 

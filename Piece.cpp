@@ -23,6 +23,16 @@ bool Piece::isWhitePiece(){
 	return white;
 }
 
+bool Piece::isMyTeamThere(Coords c, Piece ***board){
+	if (white && !board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){ // If I am white and the space isn't empty and he is white
+		return true;
+	}
+	else if (!white && !board[c.posX][c.posY]->isEmptySpace() && !board[c.posX][c.posY]->isWhitePiece()){ // If I am black and the space isn't empty and he is black
+		return true;
+	}
+	return false;
+}
+
 bool Piece::checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Piece ***board){
 	if (fromX > toX){
 		std::swap(fromX, toX);
@@ -115,6 +125,7 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board){
 		return true;
 	}
 	else if (!white && !whitesTurn) {
+		// if left or right
 		if (c.posY == coords.posY - 1 || c.posY == coords.posY + 1){
 			// if above
 			if (c.posX == coords.posX - 1){
@@ -166,7 +177,30 @@ Rook::Rook(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 }
 
 bool Rook::canMoveTo(Coords c, bool whitesTurn, Piece ***board){
-	return false;
+	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
+		if ((c.posX != coords.posX) ^ (c.posY != coords.posY)){ // Only moving in X or Y plane
+			if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && !isMyTeamThere(c, board)){ // No collision on our way there and my team doesn't occupy the space
+				if (whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && !board[c.posX][c.posY]->isWhitePiece()){ // White tries to take black piece if it's there
+					takePiece(c, board);
+				}
+				if (!whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){ // Black tries to take white piece if it's there
+					takePiece(c, board);
+				}
+				hasMoved = true;
+				coords = c;
+				return true;
+			}
+			else{ // is collision
+				return false;
+			}
+		}
+		else{ // Moving in 2 or 0 planes
+			return false;
+		}
+	}
+	else{ // Someone not moving their own piece
+		return false;
+	}
 }
 
 Knight::Knight(int x, int y, bool w, int foregroundColor, int backgroundColor) : Piece(x, y, w, backgroundColor){

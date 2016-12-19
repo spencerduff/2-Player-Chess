@@ -21,8 +21,8 @@ public:
 private:
 	Board gameBoard;
 	bool whitesTurn;
-	int turnNumber;
-
+	int turnNumber; // Starts at 2 and displays (turnNumber / 2) every turn. 
+					// This way the turn goes up 1 every time it is incremented twice.
 
 };
 

@@ -23,6 +23,8 @@ protected:
 	bool white;
 	Coords coords;
 
+	bool isMyTeamThere(Coords c, Piece ***board);
+
 	void takePiece(Coords c, Piece ***board);
 
 	bool checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Piece ***board);
@@ -48,6 +50,7 @@ public:
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board) override;
 
 private:
+	bool hasMoved;
 
 };
 
