@@ -33,12 +33,15 @@ bool Piece::isMyTeamThere(Coords c, Piece ***board){
 	return false;
 }
 
+// TODO: Refactor
 bool Piece::checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Piece ***board){
+	bool posXIter = true;
+	bool posYIter = true;
 	if (fromX > toX){
-		std::swap(fromX, toX);
+		posXIter = false;
 	}
 	if (fromY > toY){
-		std::swap(fromY, toY);
+		posYIter = false;
 	}
 	bool iterX = false;
 	bool iterY = false;
@@ -49,11 +52,32 @@ bool Piece::checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Pi
 		iterY = true;
 	}
 	int col = fromY;
-	for (int row = fromX; row <= toX && col <= toY;){
-		if (iterX)
-			++row;
-		if (iterY)
-			++col;
+	int row = fromX;
+	int prevXDiff = 0;
+	int prevYDiff = 0;
+	int deltaX = 0; 
+	int deltaY = 0;
+	for (; deltaX <= prevXDiff && deltaY <= prevYDiff;){
+		prevXDiff = abs(row - toX);
+		prevYDiff = abs(col - toY);
+		if (iterX){
+			if (posXIter){
+				++row;
+			}
+			else{
+				--row;
+			}
+		}
+		if (iterY){
+			if (posYIter){
+				++col;
+			}
+			else{
+				--col;
+			}
+		}
+		deltaX = abs(row - toX);
+		deltaY = abs(col - toY);
 		if (row == toX && col == toY){
 			return false;
 		}
@@ -244,8 +268,31 @@ Bishop::Bishop(int x, int y, bool w, int foregroundColor, int backgroundColor) :
 	emptySpace = false;
 }
 
+// Really similar to Rook, only change is the ^ operator in the second line to a & operator. Beautiful.
 bool Bishop::canMoveTo(Coords c, bool whitesTurn, Piece ***board){
-	return false;
+	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
+		if ((c.posX != coords.posX) & (c.posY != coords.posY)){ // Moving in both X and Y plane
+			if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && !isMyTeamThere(c, board)){ // No collision on our way there and my team doesn't occupy the space
+				if (whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && !board[c.posX][c.posY]->isWhitePiece()){ // White tries to take black piece if it's there
+					takePiece(c, board);
+				}
+				if (!whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){ // Black tries to take white piece if it's there
+					takePiece(c, board);
+				}
+				coords = c;
+				return true;
+			}
+			else{ // is collision
+				return false;
+			}
+		}
+		else{ // Moving in 2 or 0 planes
+			return false;
+		}
+	}
+	else{ // Someone not moving their own piece
+		return false;
+	}
 }
 
 Queen::Queen(int x, int y, bool w, int foregroundColor, int backgroundColor) : Piece(x, y, w, backgroundColor){
