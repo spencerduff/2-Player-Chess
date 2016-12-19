@@ -338,5 +338,31 @@ King::King(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 }
 
 bool King::canMoveTo(Coords c, bool whitesTurn, Piece ***board){
-	return false;
+	if (abs(c.posX - coords.posX) > 1 || abs(c.posY - coords.posY) > 1){ // Trying to move too far
+		return false;
+	}
+	//Queen's movement
+	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
+		if (((c.posX != coords.posX) & (c.posY != coords.posY)) || ((c.posX != coords.posX) ^ (c.posY != coords.posY))){ // Moving in both X and Y plane or moving in either or
+			if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && !isMyTeamThere(c, board)){ // No collision on our way there and my team doesn't occupy the space
+				if (whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && !board[c.posX][c.posY]->isWhitePiece()){ // White tries to take black piece if it's there
+					takePiece(c, board);
+				}
+				if (!whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){ // Black tries to take white piece if it's there
+					takePiece(c, board);
+				}
+				coords = c;
+				return true;
+			}
+			else{ // is collision
+				return false;
+			}
+		}
+		else{ // Not moving in exactly 2 planes or 1 plane exclusively
+			return false;
+		}
+	}
+	else{ // Someone not moving their own piece
+		return false;
+	}
 }
