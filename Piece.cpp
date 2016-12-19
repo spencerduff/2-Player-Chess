@@ -211,7 +211,30 @@ Knight::Knight(int x, int y, bool w, int foregroundColor, int backgroundColor) :
 }
 
 bool Knight::canMoveTo(Coords c, bool whitesTurn, Piece ***board){
-	return false;
+	if (!(abs(c.posX - coords.posX) == 1 && abs(c.posY - coords.posY) == 2)){ 
+		if (!(abs(c.posX - coords.posX) == 2 && abs(c.posY - coords.posY) == 1)){ // If it's not a legal knight position to move to
+			return false;
+		}
+	}
+
+	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
+		if (!isMyTeamThere(c, board)){ // My team doesn't occupy the space
+			if (whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && !board[c.posX][c.posY]->isWhitePiece()){ // White tries to take black piece if it's there
+				takePiece(c, board);
+			}
+			if (!whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){ // Black tries to take white piece if it's there
+				takePiece(c, board);
+			}
+			coords = c;
+			return true;
+		}
+		else{ // It is my own team
+			return false;
+		}
+	}
+	else{ //Someone not moving their own piece
+		return false;
+	}
 }
 
 Bishop::Bishop(int x, int y, bool w, int foregroundColor, int backgroundColor) : Piece(x, y, w, backgroundColor){
