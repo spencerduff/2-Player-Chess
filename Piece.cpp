@@ -34,6 +34,8 @@ bool Piece::isMyTeamThere(Coords c, Piece ***board){
 }
 
 // TODO: Refactor
+// The idea of this function is it checks if we're iterating a position and which way to iterate.
+// Then it will keep going as long
 bool Piece::checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Piece ***board){
 	bool posXIter = true;
 	bool posYIter = true;
@@ -286,7 +288,7 @@ bool Bishop::canMoveTo(Coords c, bool whitesTurn, Piece ***board){
 				return false;
 			}
 		}
-		else{ // Moving in 2 or 0 planes
+		else{ // Moving in 1 or 0 planes
 			return false;
 		}
 	}
@@ -303,7 +305,29 @@ Queen::Queen(int x, int y, bool w, int foregroundColor, int backgroundColor) : P
 }
 
 bool Queen::canMoveTo(Coords c, bool whitesTurn, Piece ***board){
-	return false;
+	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
+		if (((c.posX != coords.posX) & (c.posY != coords.posY)) || ((c.posX != coords.posX) ^ (c.posY != coords.posY))){ // Moving in both X and Y plane or moving in either or
+			if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && !isMyTeamThere(c, board)){ // No collision on our way there and my team doesn't occupy the space
+				if (whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && !board[c.posX][c.posY]->isWhitePiece()){ // White tries to take black piece if it's there
+					takePiece(c, board);
+				}
+				if (!whitesTurn && !board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){ // Black tries to take white piece if it's there
+					takePiece(c, board);
+				}
+				coords = c;
+				return true;
+			}
+			else{ // is collision
+				return false;
+			}
+		}
+		else{ // Not moving in exactly 2 planes or 1 plane exclusively
+			return false;
+		}
+	}
+	else{ // Someone not moving their own piece
+		return false;
+	}
 }
 
 King::King(int x, int y, bool w, int foregroundColor, int backgroundColor) : Piece(x, y, w, backgroundColor){
