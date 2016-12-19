@@ -45,3 +45,12 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.vcxproj
+Chess.vcxproj.filters
+*.obj
+Debug/Chess.log
+*.lastbuildstate
+Debug/Chess.tlog/cl.command.1.tlog
+*.tlog
+Debug/vc120.idb
+*.pdb
