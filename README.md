@@ -1,8 +1,8 @@
 # 2-Player-Chess
 An ascii 2-player chess program
 
-Currently: Working on the logic for moving pieces on the board.
+Done: Logic for moving pieces (besides en-passant)
 
-Next: Work on logic for checking for checks and checkmates.
+Currently: Work on logic for checking for checks and checkmates.
 
 Maybe: Use a min-max algorithm to implement an AI for the program.
