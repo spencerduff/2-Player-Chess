@@ -13,12 +13,16 @@ int main(){
 		else{
 			g.printBlackBoard();
 		}
+		if (g.playerInCheck()){
+			std::cout << "There is a player in check\n";
+		}
 		//std::cout << std::endl;
 
 		std::string input;
 		std::cin >> input;
-		std::cout << std::endl;
-		if (g.parseInput(input)){
+		std::cout << std::endl; 
+		
+		if (g.parseInput(input)){			
 			g.switchTurn();
 			g.incTurnNum();
 		}

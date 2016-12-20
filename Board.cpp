@@ -19,7 +19,7 @@ Board::Board(){
 
 			//Initialize pieces
 			if (row == 6){
-				board[row][col] = new Pawn(row, col, false, 0, backgroundColor);
+				board[row][col] = new Pawn(row, col, false, 0, backgroundColor); // Try different colors for black
 			}
 			else if (row == 1){
 				board[row][col] = new Pawn(row, col, true, FOREGROUND_WHITE | FOREGROUND_INTENSITY, backgroundColor);
@@ -74,7 +74,7 @@ Representation* Board::getPieceAt(int row, int col){
 }
 
 bool Board::tryToMove(int fromX, int fromY, int toX, int toY, bool whitesTurn){
-	if (board[fromX][fromY]->canMoveTo(Coords(toX, toY), whitesTurn, board)){
+	if (board[fromX][fromY]->canMoveTo(Coords(toX, toY), whitesTurn, board, true)){
 		Piece *temp = board[toX][toY];
 		int tempBG = board[toX][toY]->getRep()->getBackground();
 		int tempBG2 = board[fromX][fromY]->getRep()->getBackground();
@@ -87,4 +87,50 @@ bool Board::tryToMove(int fromX, int fromY, int toX, int toY, bool whitesTurn){
 	else{
 		return false;
 	}
+}
+
+Coords Board::kingPosition(bool white){
+	Coords c;
+	// Find position of king
+	for (int i = 0; i < BOARD_SIZE; ++i){
+		for (int j = 0; j < BOARD_SIZE; ++j){
+			if (board[i][j]->isKing()){
+				if (white && board[i][j]->isWhitePiece()){ // White's turn and a white king
+					c.posX = i;
+					c.posY = j;
+				}
+				else if (!white && !board[i][j]->isWhitePiece()){ // Black's turn and a black king
+					c.posX = i;
+					c.posY = j;
+				}
+			}
+		}
+	}
+	return c;
+}
+
+bool Board::iterPieceAttackPos(Coords c, bool white){
+	for (int i = 0; i < BOARD_SIZE; ++i){
+		for (int j = 0; j < BOARD_SIZE; ++j){
+			if (white && board[i][j]->isWhitePiece()){ // White attacking
+				if (board[i][j]->canMoveTo(c, white, board, false)){
+					return true;
+				}
+			}
+			else if (!white && !board[i][j]->isWhitePiece()){ // Black attacking
+				if (board[i][j]->canMoveTo(c, white, board, false)){
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool Board::kingInCheck(bool white){	
+	// Find position of king
+	Coords kingCoords = kingPosition(white);
+	// Check if any opposing piece can move to the king
+	// If they can, you're in check
+	return iterPieceAttackPos(kingCoords, !white); // See if the opposite team can attack the king
 }

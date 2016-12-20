@@ -13,7 +13,14 @@ public:
 
 	bool tryToMove(int fromX, int fromY, int toX, int toY, bool whitesTurn);
 
+	bool kingInCheck(bool white);
+
 private:
+
+	Coords kingPosition(bool white);
+
+	bool iterPieceAttackPos(Coords c, bool white);
+
 	Piece ***board;
 
 };

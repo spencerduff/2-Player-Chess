@@ -88,3 +88,6 @@ bool Game::parseInput(std::string input){
 	return true;
 }
 
+bool Game::playerInCheck(){
+	return gameBoard.kingInCheck(whitesTurn);
+}

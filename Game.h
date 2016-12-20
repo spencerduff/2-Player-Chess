@@ -16,6 +16,8 @@ public:
 	void incTurnNum();
 	int getTurnNum();
 
+	bool playerInCheck();
+
 	bool parseInput(std::string input);
 
 private:

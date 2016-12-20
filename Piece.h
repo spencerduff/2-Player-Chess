@@ -7,7 +7,7 @@
 class Piece{
 public:
 	Piece(int x, int y, bool w, int foregroundColor);
-	virtual bool canMoveTo(Coords c, bool whitesTurn, Piece ***board);
+	virtual bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake);
 	Representation* getRep(){ return rep; }
 	void setRepBackground(int b);
 
@@ -15,12 +15,14 @@ public:
 
 	bool isEmptySpace();
 	bool isWhitePiece();
+	bool isKing();
 
 
 protected:
 	Representation *rep;
 	bool emptySpace;
 	bool white;
+	bool king;
 	Coords coords;
 
 	bool isMyTeamThere(Coords c, Piece ***board);
@@ -37,7 +39,7 @@ private:
 class Pawn : public Piece{
 public:
 	Pawn(int x, int y, bool w, int foregroundColor, int backgroundColor);
-	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board) override;
+	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
 	bool hasMoved;
@@ -47,7 +49,7 @@ private:
 class Rook : public Piece{
 public:
 	Rook(int x, int y, bool w, int foregroundColor, int backgroundColor);
-	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board) override;
+	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
 	bool hasMoved;
@@ -57,7 +59,7 @@ private:
 class Knight : public Piece{
 public:
 	Knight(int x, int y, bool w, int foregroundColor, int backgroundColor);
-	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board) override;
+	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
 
@@ -66,7 +68,7 @@ private:
 class Bishop : public Piece{
 public:
 	Bishop(int x, int y, bool w, int foregroundColor, int backgroundColor);
-	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board) override;
+	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
 
@@ -75,7 +77,7 @@ private:
 class Queen : public Piece{
 public:
 	Queen(int x, int y, bool w, int foregroundColor, int backgroundColor);
-	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board) override;
+	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
 
@@ -84,9 +86,10 @@ private:
 class King : public Piece{
 public:
 	King(int x, int y, bool w, int foregroundColor, int backgroundColor);
-	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board) override;
+	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
+	bool hasMoved;
 
 };
 
