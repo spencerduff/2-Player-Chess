@@ -91,3 +91,20 @@ bool Game::parseInput(std::string input){
 bool Game::playerInCheck(){
 	return gameBoard.kingInCheck(whitesTurn);
 }
+
+bool Game::playerInMate(){
+	for (int i = 0; i < gameBoard.BOARD_SIZE; ++i){
+		for (int j = 0; j < gameBoard.BOARD_SIZE; ++j){
+			for (int row = 0; row < gameBoard.BOARD_SIZE; ++row){
+				for (int col = 0; col < gameBoard.BOARD_SIZE; ++col){ // O(n^4) try to move every piece to every spot and check if the king is still in check... Gross
+					Board potentialBoard(gameBoard);
+					potentialBoard.tryToMove(i, j, row, col, whitesTurn);
+					if (!potentialBoard.kingInCheck(whitesTurn)){
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}

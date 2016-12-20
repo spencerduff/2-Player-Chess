@@ -7,6 +7,12 @@ Representation::Representation(char s, int f, int b){
 	colorBackground = b;
 }
 
+Representation::Representation(Representation &other){
+	this->symbol = other.symbol;
+	this->colorForeground = other.colorForeground;
+	this->colorBackground = other.colorBackground;
+}
+
 void Representation::setColor(int foreground, int background){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), foreground | background);
 }

@@ -7,6 +7,10 @@
 class Piece{
 public:
 	Piece(int x, int y, bool w, int foregroundColor);
+	Piece(const Piece &other);
+	
+	virtual Piece* clone();
+
 	virtual bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake);
 	Representation* getRep(){ return rep; }
 	void setRepBackground(int b);
@@ -39,6 +43,10 @@ private:
 class Pawn : public Piece{
 public:
 	Pawn(int x, int y, bool w, int foregroundColor, int backgroundColor);
+	Pawn(const Pawn &other);
+
+	Piece* clone() override;
+
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
@@ -49,6 +57,10 @@ private:
 class Rook : public Piece{
 public:
 	Rook(int x, int y, bool w, int foregroundColor, int backgroundColor);
+	Rook(const Rook &other);
+
+	Piece* clone() override;
+
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
@@ -59,6 +71,10 @@ private:
 class Knight : public Piece{
 public:
 	Knight(int x, int y, bool w, int foregroundColor, int backgroundColor);
+	Knight(const Knight &other);
+
+	Piece* clone() override;
+
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
@@ -68,6 +84,10 @@ private:
 class Bishop : public Piece{
 public:
 	Bishop(int x, int y, bool w, int foregroundColor, int backgroundColor);
+	Bishop(const Bishop &other);
+
+	Piece* clone() override;
+
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
@@ -77,6 +97,10 @@ private:
 class Queen : public Piece{
 public:
 	Queen(int x, int y, bool w, int foregroundColor, int backgroundColor);
+	Queen(const Queen &other);
+
+	Piece* clone() override;
+
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
@@ -86,6 +110,10 @@ private:
 class King : public Piece{
 public:
 	King(int x, int y, bool w, int foregroundColor, int backgroundColor);
+	King(const King &other);
+
+	Piece* clone() override;
+
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:

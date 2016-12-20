@@ -18,6 +18,8 @@ public:
 
 	bool playerInCheck();
 
+	bool playerInMate();
+
 	bool parseInput(std::string input);
 
 private:

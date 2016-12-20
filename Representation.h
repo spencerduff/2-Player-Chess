@@ -4,6 +4,7 @@
 class Representation{
 public:
 	Representation(char s, int f, int b);
+	Representation(Representation &other);
 
 	void setColor(int foreground, int background);
 

@@ -69,19 +69,55 @@ Board::Board(){
 
 }
 
+Board::Board(const Board &other){
+	this->board = new Piece**[BOARD_SIZE];
+	for (unsigned int row = 0; row < BOARD_SIZE; ++row){
+		this->board[row] = new Piece*[BOARD_SIZE];
+		for (unsigned int col = 0; col < BOARD_SIZE; ++col){
+			this->board[row][col] = other.board[row][col]->clone();
+		}
+	}
+}
+
+Board::~Board(){
+	for (unsigned int row = 0; row < BOARD_SIZE; ++row){
+		for (unsigned int col = 0; col < BOARD_SIZE; ++col){
+			delete board[row][col];
+			board[row][col] = NULL;
+		}
+		delete[] board[row];
+		board[row] = NULL;
+	}
+	delete[] board;
+	board = NULL;
+}
+
 Representation* Board::getPieceAt(int row, int col){
 	return board[row][col]->getRep();
 }
 
+void Board::swapPieces(int fromX, int fromY, int toX, int toY){
+	Piece *temp = board[toX][toY];
+	int tempBG = board[toX][toY]->getRep()->getBackground();
+	int tempBG2 = board[fromX][fromY]->getRep()->getBackground();
+	board[toX][toY] = board[fromX][fromY];
+	board[toX][toY]->setRepBackground(tempBG);
+	board[fromX][fromY] = temp;
+	board[fromX][fromY]->setRepBackground(tempBG2);
+}
+
 bool Board::tryToMove(int fromX, int fromY, int toX, int toY, bool whitesTurn){
+	Board tempBoard(*this);
+
+	if (tempBoard.board[fromX][fromY]->canMoveTo(Coords(toX, toY), whitesTurn, tempBoard.board, true)){ // Try the move, if we're put in check, don't do it
+		tempBoard.swapPieces(fromX, fromY, toX, toY);
+		if (tempBoard.kingInCheck(whitesTurn)){
+			return false;
+		}
+	}
+
 	if (board[fromX][fromY]->canMoveTo(Coords(toX, toY), whitesTurn, board, true)){
-		Piece *temp = board[toX][toY];
-		int tempBG = board[toX][toY]->getRep()->getBackground();
-		int tempBG2 = board[fromX][fromY]->getRep()->getBackground();
-		board[toX][toY] = board[fromX][fromY];
-		board[toX][toY]->setRepBackground(tempBG);
-		board[fromX][fromY] = temp;
-		board[fromX][fromY]->setRepBackground(tempBG2);
+		swapPieces(fromX, fromY, toX, toY);
 		return true;
 	}
 	else{

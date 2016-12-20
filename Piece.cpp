@@ -8,8 +8,20 @@ Piece::Piece(int x, int y, bool w, int backgroundColor){
 	king = false;
 }
 
+Piece::Piece(const Piece &other){
+	this->white = other.white;
+	this->coords = other.coords;
+	this->rep = new Representation(*other.rep);
+	this->emptySpace = other.emptySpace;
+	this->king = other.king;
+}
+
 Piece::~Piece(){
 	delete rep;
+}
+
+Piece* Piece::clone(){
+	return new Piece(*this);
 }
 
 bool Piece::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
@@ -88,7 +100,7 @@ bool Piece::checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Pi
 		if (row == toX && col == toY){
 			return false;
 		}
-		if (!board[row][col]->emptySpace){
+		if (row < 8 && row >= 0 && col < 8 && col >= 0 && !board[row][col]->emptySpace){
 			return true;
 		}
 	}
@@ -106,6 +118,14 @@ Pawn::Pawn(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 	emptySpace = false;
 	hasMoved = false;
 	king = false;
+}
+
+Pawn::Pawn(const Pawn &other) : Piece(other){
+	this->hasMoved = other.hasMoved;
+}
+
+Piece* Pawn::clone(){
+	return new Pawn(*this);
 }
 
 void Piece::takePiece(Coords c, Piece ***board){
@@ -224,6 +244,15 @@ Rook::Rook(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 	king = false;
 }
 
+Rook::Rook(const Rook &other) : Piece(other){
+	this->hasMoved = other.hasMoved;
+}
+
+Piece* Rook::clone(){
+	return new Rook(*this);
+}
+
+
 bool Rook::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
 	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
 		if ((c.posX != coords.posX) ^ (c.posY != coords.posY)){ // Only moving in X or Y plane
@@ -263,6 +292,14 @@ Knight::Knight(int x, int y, bool w, int foregroundColor, int backgroundColor) :
 	rep = new Representation('N', foregroundColor, backgroundColor);
 	emptySpace = false;
 	king = false;
+}
+
+Knight::Knight(const Knight &other) : Piece(other){
+
+}
+
+Piece* Knight::clone(){
+	return new Knight(*this);
 }
 
 bool Knight::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
@@ -306,6 +343,14 @@ Bishop::Bishop(int x, int y, bool w, int foregroundColor, int backgroundColor) :
 	king = false;
 }
 
+Bishop::Bishop(const Bishop &other) : Piece(other){
+
+}
+
+Piece* Bishop::clone(){
+	return new Bishop(*this);
+}
+
 // Really similar to Rook, only change is the ^ operator in the second line to a & operator. Beautiful.
 bool Bishop::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
 	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
@@ -347,6 +392,14 @@ Queen::Queen(int x, int y, bool w, int foregroundColor, int backgroundColor) : P
 	king = false;
 }
 
+Queen::Queen(const Queen &other) : Piece(other){
+
+}
+
+Piece* Queen::clone(){
+	return new Queen(*this);
+}
+
 bool Queen::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
 	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
 		if (((c.posX != coords.posX) & (c.posY != coords.posY)) || ((c.posX != coords.posX) ^ (c.posY != coords.posY))){ // Moving in both X and Y plane or moving in either or
@@ -386,6 +439,14 @@ King::King(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 	emptySpace = false;
 	hasMoved = false;
 	king = true;
+}
+
+King::King(const King &other) : Piece(other){
+	this->hasMoved = other.hasMoved;
+}
+
+Piece* King::clone(){
+	return new King(*this);
 }
 
 bool King::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){

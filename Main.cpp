@@ -15,6 +15,11 @@ int main(){
 		}
 		if (g.playerInCheck()){
 			std::cout << "There is a player in check\n";
+			if (g.playerInMate()){
+				std::cout << "There is a player in checkmate, gg.\n";
+				system("PAUSE");
+				return 0;
+			}
 		}
 		//std::cout << std::endl;
 
