@@ -67,7 +67,7 @@ bool Piece::isMyTeamThere(Coords c, Piece ***board){
 
 // TODO: Refactor
 // The idea of this function is it checks if we're iterating a position and which way to iterate.
-// Then it will keep going as long
+// Then it will keep going as long as it's getting closer to the position and there isn't something in the way
 bool Piece::checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Piece ***board){
 	bool posXIter = true;
 	bool posYIter = true;
@@ -355,6 +355,7 @@ bool Knight::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTak
 				}
 			}
 			if (shouldTake){
+				hasMoved = true;
 				coords = c;
 			}
 			return true;
@@ -399,6 +400,7 @@ bool Bishop::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTak
 					}
 				}
 				if (shouldTake){
+					hasMoved = true;
 					coords = c;
 				}
 				return true;
@@ -446,6 +448,7 @@ bool Queen::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake
 					}
 				}
 				if (shouldTake){
+					hasMoved = true;
 					coords = c;
 				}
 				return true;
@@ -479,11 +482,80 @@ Piece* King::clone(){
 	return new King(*this);
 }
 
+void swapPieces(int fromX, int fromY, int toX, int toY, Piece*** board){
+	Piece *temp = board[toX][toY];
+	int tempBG = board[toX][toY]->getRep()->getBackground();
+	int tempBG2 = board[fromX][fromY]->getRep()->getBackground();
+	board[toX][toY] = board[fromX][fromY];
+	board[toX][toY]->setRepBackground(tempBG);
+	board[fromX][fromY] = temp;
+	board[fromX][fromY]->setRepBackground(tempBG2);
+}
+
+bool King::canCastle(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
+	if (!hasMoved){
+		if (!white && !whitesTurn){
+			if (c.posX == 7 && c.posY == 6){ // Black king's side castling 
+				if (!board[7][7]->getHasMoved()){
+					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && board[c.posX][c.posY]->isEmptySpace()){ // no collision and empty space
+						if (shouldTake){
+							swapPieces(7, 7, 7, 5, board); // rook movement
+							hasMoved = true;
+						}
+						return true;
+					}
+				}
+			}
+			else if (c.posX == 7 && c.posY == 2){
+				if (!board[7][0]->getHasMoved()){
+					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY - 1, board) && board[c.posX][c.posY - 1]->isEmptySpace()){ // no collision and empty space
+						if (shouldTake){
+							swapPieces(7, 0, 7, 3, board); // rook movement
+							hasMoved = true;
+						}
+						return true;
+					}
+				}
+			}
+		}
+		else if (white && whitesTurn){
+			if (c.posX == 0 && c.posY == 6){ // White king's side castling 
+				if (!board[0][7]->getHasMoved()){
+					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && board[c.posX][c.posY]->isEmptySpace()){ // no collision and empty space
+						if (shouldTake){
+							swapPieces(0, 7, 0, 5, board); // rook movement
+							hasMoved = true;
+						}
+						return true;
+					}
+				}
+			}
+			else if (c.posX == 0 && c.posY == 2){
+				if (!board[0][0]->getHasMoved()){
+					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY - 1, board) && board[c.posX][c.posY - 1]->isEmptySpace()){ // no collision and empty space
+						if (shouldTake){
+							swapPieces(0, 0, 0, 3, board); // rook movement
+							hasMoved = true;
+						}
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 bool King::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
+	// Castling
+	if (canCastle(c, whitesTurn, board, shouldTake)){
+		return true;
+	}
+	
 	if (abs(c.posX - coords.posX) > 1 || abs(c.posY - coords.posY) > 1){ // Trying to move too far
 		return false;
 	}
-	//Queen's movement
+	// Queen's movement
 	if ((white && whitesTurn) || (!white && !whitesTurn)){ // White moving his own piece OR Black moving his own piece
 		if (((c.posX != coords.posX) & (c.posY != coords.posY)) || ((c.posX != coords.posX) ^ (c.posY != coords.posY))){ // Moving in both X and Y plane or moving in either or
 			if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && !isMyTeamThere(c, board)){ // No collision on our way there and my team doesn't occupy the space

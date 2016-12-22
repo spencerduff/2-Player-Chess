@@ -126,6 +126,8 @@ public:
 private:
 	bool hasMoved;
 
+	bool canCastle(Coords c, bool whitesTurn, Piece ***board, bool shouldTake);
+
 };
 
 
