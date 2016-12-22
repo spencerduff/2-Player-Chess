@@ -55,6 +55,10 @@ bool Piece::getJumpedTwo(){
 	return jumpedTwo;
 }
 
+Coords Piece::getCoords(){
+	return coords;
+}
+
 bool Piece::isMyTeamThere(Coords c, Piece ***board){
 	if (white && !board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){ // If I am white and the space isn't empty and he is white
 		return true;
@@ -124,6 +128,10 @@ bool Piece::checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Pi
 
 void Piece::setRepBackground(int b){
 	rep->changeBackground(b);
+}
+
+void Piece::setCoords(Coords c){
+	coords = Coords(c.posX, c.posY);
 }
 
 Pawn::Pawn(int x, int y, bool w, int foregroundColor, int backgroundColor) : Piece(x, y, w, backgroundColor){
@@ -486,6 +494,9 @@ void swapPieces(int fromX, int fromY, int toX, int toY, Piece*** board){
 	Piece *temp = board[toX][toY];
 	int tempBG = board[toX][toY]->getRep()->getBackground();
 	int tempBG2 = board[fromX][fromY]->getRep()->getBackground();
+	Coords tempCoords(toX, toY);
+	board[toX][toY]->setCoords(Coords(fromX, fromY));
+	board[fromX][fromY]->setCoords(tempCoords);
 	board[toX][toY] = board[fromX][fromY];
 	board[toX][toY]->setRepBackground(tempBG);
 	board[fromX][fromY] = temp;
@@ -499,6 +510,7 @@ bool King::canCastle(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 				if (!board[7][7]->getHasMoved()){
 					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && board[c.posX][c.posY]->isEmptySpace()){ // no collision and empty space
 						if (shouldTake){
+							coords = c;
 							swapPieces(7, 7, 7, 5, board); // rook movement
 							hasMoved = true;
 						}
@@ -510,6 +522,7 @@ bool King::canCastle(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 				if (!board[7][0]->getHasMoved()){
 					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY - 1, board) && board[c.posX][c.posY - 1]->isEmptySpace()){ // no collision and empty space
 						if (shouldTake){
+							coords = c;
 							swapPieces(7, 0, 7, 3, board); // rook movement
 							hasMoved = true;
 						}
@@ -523,6 +536,7 @@ bool King::canCastle(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 				if (!board[0][7]->getHasMoved()){
 					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY, board) && board[c.posX][c.posY]->isEmptySpace()){ // no collision and empty space
 						if (shouldTake){
+							coords = c;
 							swapPieces(0, 7, 0, 5, board); // rook movement
 							hasMoved = true;
 						}
@@ -534,6 +548,7 @@ bool King::canCastle(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 				if (!board[0][0]->getHasMoved()){
 					if (!checkCollisionIteratively(coords.posX, coords.posY, c.posX, c.posY - 1, board) && board[c.posX][c.posY - 1]->isEmptySpace()){ // no collision and empty space
 						if (shouldTake){
+							coords = c;
 							swapPieces(0, 0, 0, 3, board); // rook movement
 							hasMoved = true;
 						}

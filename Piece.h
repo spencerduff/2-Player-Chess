@@ -24,8 +24,11 @@ public:
 	bool getHasMoved();
 	bool getJumpedTwo();
 
+	Coords getCoords();
+
 	void resetJumps();
 
+	void setCoords(Coords c);
 
 protected:
 	Representation *rep;
@@ -36,6 +39,7 @@ protected:
 	bool hasMoved;
 	bool jumpedTwo;
 	Coords coords;
+
 
 	bool isMyTeamThere(Coords c, Piece ***board);
 
