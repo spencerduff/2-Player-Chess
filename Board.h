@@ -19,6 +19,8 @@ public:
 
 	bool kingInCheck(bool white);
 
+	void resetJumps(int row, int col, bool white);
+
 private:
 
 	Coords kingPosition(bool white);

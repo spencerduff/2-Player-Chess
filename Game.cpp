@@ -83,8 +83,6 @@ bool Game::parseInput(std::string input){
 		return gameBoard.tryToMove(fromPosX, fromPosY, toPosX, toPosY, whitesTurn);
 	}
 
-
-
 	return true;
 }
 
@@ -107,4 +105,12 @@ bool Game::playerInMate(){
 		}
 	}
 	return true;
+}
+
+void Game::resetPawnJumps(){
+	for (int row = 0; row < gameBoard.BOARD_SIZE; ++row){
+		for (int col = 0; col < gameBoard.BOARD_SIZE; ++col){
+			gameBoard.resetJumps(row, col, whitesTurn);
+		}
+	}
 }

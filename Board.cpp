@@ -170,3 +170,12 @@ bool Board::kingInCheck(bool white){
 	// If they can, you're in check
 	return iterPieceAttackPos(kingCoords, !white); // See if the opposite team can attack the king
 }
+
+void Board::resetJumps(int row, int col, bool white){
+	if (board[row][col]->isWhitePiece() && white){
+		board[row][col]->resetJumps();
+	}
+	if (!board[row][col]->isWhitePiece() && !white){
+		board[row][col]->resetJumps();
+	}
+}

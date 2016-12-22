@@ -22,6 +22,8 @@ public:
 
 	bool parseInput(std::string input);
 
+	void resetPawnJumps();
+
 private:
 	Board gameBoard;
 	bool whitesTurn;

@@ -30,6 +30,7 @@ int main(){
 		if (g.parseInput(input)){			
 			g.switchTurn();
 			g.incTurnNum();
+			g.resetPawnJumps();
 		}
 	}
 

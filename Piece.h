@@ -20,6 +20,11 @@ public:
 	bool isEmptySpace();
 	bool isWhitePiece();
 	bool isKing();
+	bool isPawn();
+	bool getHasMoved();
+	bool getJumpedTwo();
+
+	void resetJumps();
 
 
 protected:
@@ -27,6 +32,9 @@ protected:
 	bool emptySpace;
 	bool white;
 	bool king;
+	bool pawn;
+	bool hasMoved;
+	bool jumpedTwo;
 	Coords coords;
 
 	bool isMyTeamThere(Coords c, Piece ***board);
@@ -50,7 +58,6 @@ public:
 	bool canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake) override;
 
 private:
-	bool hasMoved;
 
 };
 

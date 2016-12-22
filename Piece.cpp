@@ -6,6 +6,9 @@ Piece::Piece(int x, int y, bool w, int backgroundColor){
 	rep = new Representation(' ', 0, backgroundColor);
 	emptySpace = true;
 	king = false;
+	pawn = false;
+	jumpedTwo = false;
+	hasMoved = false;
 }
 
 Piece::Piece(const Piece &other){
@@ -38,6 +41,18 @@ bool Piece::isWhitePiece(){
 
 bool Piece::isKing(){
 	return king;
+}
+
+bool Piece::isPawn(){
+	return pawn;
+}
+
+bool Piece::getHasMoved(){
+	return hasMoved;
+}
+
+bool Piece::getJumpedTwo(){
+	return jumpedTwo;
 }
 
 bool Piece::isMyTeamThere(Coords c, Piece ***board){
@@ -116,8 +131,7 @@ Pawn::Pawn(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 	rep = NULL;
 	rep = new Representation('P', foregroundColor, backgroundColor);
 	emptySpace = false;
-	hasMoved = false;
-	king = false;
+	pawn = true;
 }
 
 Pawn::Pawn(const Pawn &other) : Piece(other){
@@ -126,6 +140,10 @@ Pawn::Pawn(const Pawn &other) : Piece(other){
 
 Piece* Pawn::clone(){
 	return new Pawn(*this);
+}
+
+void Piece::resetJumps(){
+	jumpedTwo = false;
 }
 
 void Piece::takePiece(Coords c, Piece ***board){
@@ -142,6 +160,15 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 		if (c.posY == coords.posY - 1 || c.posY == coords.posY + 1){
 			// if above
 			if (c.posX == coords.posX + 1){
+				// check if it's next to me and just jumped 2 spaces, and it's not a white piece
+				if (board[coords.posX][c.posY]->getJumpedTwo() && !board[coords.posX][c.posY]->isWhitePiece()){
+					if (shouldTake){
+						takePiece(Coords(coords.posX, c.posY), board);
+						hasMoved = true;
+						coords = c;
+					}
+					return true;
+				}
 				// if there's something there that isn't a white piece
 				if (!board[c.posX][c.posY]->isEmptySpace() && !board[c.posX][c.posY]->isWhitePiece()){
 					// take it
@@ -163,6 +190,7 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 		if (!hasMoved && c.posX == coords.posX + 2){
 			if (board[c.posX][c.posY]->isEmptySpace() && board[c.posX-1][c.posY]->isEmptySpace()){
 				if (shouldTake){
+					jumpedTwo = true;
 					hasMoved = true;
 					coords = c;
 				}
@@ -188,6 +216,13 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 		if (c.posY == coords.posY - 1 || c.posY == coords.posY + 1){
 			// if above
 			if (c.posX == coords.posX - 1){
+				// check if it's next to me and just jumped 2 spaces, and it's a white piece
+				if (board[coords.posX][c.posY]->getJumpedTwo() && board[coords.posX][c.posY]->isWhitePiece()){
+					takePiece(Coords(coords.posX, c.posY), board);
+					hasMoved = true;
+					coords = c;
+					return true;
+				}
 				// if there's something there that is a white piece
 				if (!board[c.posX][c.posY]->isEmptySpace() && board[c.posX][c.posY]->isWhitePiece()){
 					// take it
@@ -210,6 +245,7 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 		if (!hasMoved && c.posX == coords.posX - 2){
 			if (board[c.posX][c.posY]->isEmptySpace() && board[c.posX + 1][c.posY]->isEmptySpace()){
 				if (shouldTake){
+					jumpedTwo = true;
 					hasMoved = true;
 					coords = c;
 				}
@@ -240,8 +276,6 @@ Rook::Rook(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 	rep = NULL;
 	rep = new Representation('R', foregroundColor, backgroundColor);
 	emptySpace = false;
-	hasMoved = false;
-	king = false;
 }
 
 Rook::Rook(const Rook &other) : Piece(other){
@@ -291,7 +325,6 @@ Knight::Knight(int x, int y, bool w, int foregroundColor, int backgroundColor) :
 	rep = NULL;
 	rep = new Representation('N', foregroundColor, backgroundColor);
 	emptySpace = false;
-	king = false;
 }
 
 Knight::Knight(const Knight &other) : Piece(other){
@@ -340,7 +373,6 @@ Bishop::Bishop(int x, int y, bool w, int foregroundColor, int backgroundColor) :
 	rep = NULL;
 	rep = new Representation('B', foregroundColor, backgroundColor);
 	emptySpace = false;
-	king = false;
 }
 
 Bishop::Bishop(const Bishop &other) : Piece(other){
@@ -389,7 +421,6 @@ Queen::Queen(int x, int y, bool w, int foregroundColor, int backgroundColor) : P
 	rep = NULL;
 	rep = new Representation('Q', foregroundColor, backgroundColor);
 	emptySpace = false;
-	king = false;
 }
 
 Queen::Queen(const Queen &other) : Piece(other){
@@ -437,7 +468,6 @@ King::King(int x, int y, bool w, int foregroundColor, int backgroundColor) : Pie
 	rep = NULL;
 	rep = new Representation('K', foregroundColor, backgroundColor);
 	emptySpace = false;
-	hasMoved = false;
 	king = true;
 }
 
