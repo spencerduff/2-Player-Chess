@@ -91,6 +91,7 @@ bool Game::playerInCheck(){
 }
 
 bool Game::playerInMate(){
+	static Board potentialBoard(gameBoard);
 	for (int i = 0; i < gameBoard.BOARD_SIZE; ++i){
 		for (int j = 0; j < gameBoard.BOARD_SIZE; ++j){
 			for (int row = 0; row < gameBoard.BOARD_SIZE; ++row){
