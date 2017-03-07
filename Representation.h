@@ -12,6 +12,7 @@ public:
 	void changeBackground(int b);
 
 	int getBackground();
+	int getForeground();
 
 	void printSymbol();
 

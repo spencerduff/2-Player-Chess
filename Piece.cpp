@@ -161,7 +161,36 @@ void Piece::takePiece(Coords c, Piece ***board){
 	board[c.posX][c.posY] = new Piece(c.posX, c.posY, false, background);
 }
 
-// TODO: Work on logic to take pieces en-passant
+void Piece::promotePawn(Coords c, Piece ***board){
+	std::cout << "Type the capitalized letter of the Piece you want to promote your pawn to: \n";
+	char choice;
+	std::cin >> choice;
+
+	while (choice != 'N' && choice != 'Q' && choice != 'R' && choice != 'B'){
+		std::cout << "Please choose B, Q, R, or N: \n";
+		std::cin >> choice;
+	}
+	bool white = board[c.posX][c.posY]->isWhitePiece();
+	int foreground = board[c.posX][c.posY]->getRep()->getForeground();
+	int background = board[c.posX][c.posY]->getRep()->getBackground();
+	delete board[c.posX][c.posY];
+	board[c.posX][c.posY] = NULL;
+
+	if (choice == 'N'){
+		board[c.posX][c.posY] = new Knight(c.posX, c.posY, white, foreground, background);
+	}
+	else if (choice == 'B'){
+		board[c.posX][c.posY] = new Bishop(c.posX, c.posY, white, foreground, background);
+	}
+	else if (choice == 'Q'){
+		board[c.posX][c.posY] = new Queen(c.posX, c.posY, white, foreground, background);
+	}
+	else if (choice == 'R'){
+		board[c.posX][c.posY] = new Rook(c.posX, c.posY, white, foreground, background);
+	}
+
+}
+
 bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake){
 	if (white && whitesTurn){ 
 		// if left or right
@@ -183,6 +212,9 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 					if (shouldTake){
 						takePiece(c, board);
 						hasMoved = true;
+						if (c.posX == 7){
+							promotePawn(coords, board);
+						}
 						coords = c;
 					}
 					return true;
@@ -215,6 +247,9 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 		}
 		if (shouldTake){
 			hasMoved = true;
+			if (c.posX == 7){
+				promotePawn(coords, board);
+			}
 			coords = c;
 		}
 		return true;
@@ -237,6 +272,9 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 					if (shouldTake){
 						takePiece(c, board);
 						hasMoved = true;
+						if (c.posX == 0){
+							promotePawn(coords, board);
+						}
 						coords = c;
 					}
 					return true;
@@ -270,6 +308,9 @@ bool Pawn::canMoveTo(Coords c, bool whitesTurn, Piece ***board, bool shouldTake)
 		}
 		if (shouldTake){
 			hasMoved = true;
+			if (c.posX == 0){
+				promotePawn(coords, board);
+			}
 			coords = c;
 		}
 		return true;

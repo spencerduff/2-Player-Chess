@@ -32,3 +32,7 @@ void operator<<(std::ostream& os, Representation& s)
 int Representation::getBackground(){
 	return colorBackground;
 }
+
+int Representation::getForeground(){
+	return colorForeground;
+}

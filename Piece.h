@@ -47,6 +47,8 @@ protected:
 
 	bool checkCollisionIteratively(int fromX, int fromY, int toX, int toY, Piece ***board);
 
+	void promotePawn(Coords c, Piece ***board);
+
 private:
 
 };
